@@ -237,6 +237,7 @@ function localize(html, page) {
   out = replaceAll(out, `href="${page.caPath}" hreflang="es"`, `href="${page.esPath}" hreflang="es"`);
 
   for (const [ca, es] of dictionary) out = replaceAll(out, ca, es);
+  out = replaceAll(out, "Metodología-floreix", "Metodologia-floreix");
   out = replaceAll(out, "Comparteix", "Comparte");
   out = replaceAll(out, "Baixa", "Descargar");
   out = replaceAll(out, "Pantalla completa", "Pantalla completa");
