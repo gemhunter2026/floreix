@@ -213,6 +213,26 @@ function replaceAll(text, from, to) {
   return text.split(from).join(to);
 }
 
+function markSpanishLanguageCurrent(html) {
+  const spanishFlag = html.match(/lang-item-es[\s\S]*?<img src="([^"]+)"/)?.[1];
+  if (!spanishFlag) return html;
+
+  let output = html.replace(
+    /(<li[^>]*pll-parent-menu-item[^>]*>[\s\S]*?<a[^>]*class="menu-link">)<img src="[^"]+" alt="" width="16" height="11" style="width: 16px; height: 11px;" \/><span style="margin-left:0.3em;">[^<]+<\/span>/g,
+    `$1<img src="${spanishFlag}" alt="" width="16" height="11" style="width: 16px; height: 11px;" /><span style="margin-left:0.3em;">Español</span>`,
+  );
+
+  output = output.replace(/(<li[^>]*class="[^"]*lang-item-ca[^"]*)\s+current-lang/g, "$1");
+  output = output.replace(/(<li[^>]*class="[^"]*lang-item-ca[^"]*)\s+current_page_item/g, "$1");
+  output = output.replace(/(<li[^>]*class="[^"]*lang-item-ca[^"]*)\s+menu-item-home/g, "$1");
+  output = output.replace(/(<li[^>]*class=")([^"]*lang-item-es)([^"]*)(")/g, (_match, start, before, after, end) => {
+    const classes = `${before}${after}`.replace(/\s+/g, " ").trim();
+    return `${start}${classes.includes("current-lang") ? classes : `${classes} current-lang`}${end}`;
+  });
+
+  return output;
+}
+
 function localize(html, page) {
   let out = html;
   out = out.replace(/<html lang="ca"/, '<html lang="es"');
@@ -246,7 +266,7 @@ function localize(html, page) {
   out = replaceAll(out, "Anterior", "Anterior");
   out = replaceAll(out, "Següent", "Siguiente");
   out = replaceAll(out, "Tanca", "Cerrar");
-  return out;
+  return markSpanishLanguageCurrent(out);
 }
 
 for (const page of pages) {
